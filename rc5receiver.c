@@ -1,5 +1,10 @@
 #include "msp430x22x4.h"
 
+/* RC5 Protocol Receiver algorithm
+   using Hardware-Interrupt based on Capture/Compare Mode
+   using MSP430. Algorithm-Only - Test Code 
+*/
+
 /* Prototypes */
 void sysInit(void);
 void setupIR(void);
