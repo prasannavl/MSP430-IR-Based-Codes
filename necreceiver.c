@@ -8,7 +8,7 @@ void main(void)
 	__enable_interrupt();
 	
 	while (!(UCA0TXIFG));
-	UCA0TXBUF = 0xAA;								// Send serial code to PC to identify as a Serial PS/2 Input Device
+	UCA0TXBUF = 0xAA;			// Send serial code to PC to identify as a Serial PS/2 Input Device
 	InputMode.AlphaMode = False;
 	
 	// Turn off CPU and switch to Low Power Mode 3
@@ -32,26 +32,26 @@ void main(void)
 
 void sysInit(void) {
 	// Initialize System Clocks
-	WDTCTL = WDTPW + WDTHOLD;							// Stop Watchdog Timer
-	BCSCTL1 = CALBC1_1MHZ;								// Set Basic Clock -> 1Mhz
-    DCOCTL = CALDCO_1MHZ;  								// Set DCO -> 1Mhz
-	BCSCTL3 |= LFXT1S_2;								// Set ACLK -> VLOCLK = 12Khz
+	WDTCTL = WDTPW + WDTHOLD;					// Stop Watchdog Timer
+	BCSCTL1 = CALBC1_1MHZ;						// Set Basic Clock -> 1Mhz
+        DCOCTL = CALDCO_1MHZ;  						// Set DCO -> 1Mhz
+	BCSCTL3 |= LFXT1S_2;						// Set ACLK -> VLOCLK = 12Khz
 	
 	// Initialize GPIO
 	P1DIR |= LED0 + LED1;
 	P1OUT |= LED1;
 	P1OUT &= ~LED0;
-	P1SEL |= IRIN;										// IR Detector - Capture Mode - TA1
+	P1SEL |= IRIN;							// IR Detector - Capture Mode - TA1
 	P1DIR &= ~IRIN;
-	P3SEL = 0x30;										// UART - P3.4,5 = USCI_A0 TXD/RXD
+	P3SEL = 0x30;							// UART - P3.4,5 = USCI_A0 TXD/RXD
 	
 	// Initialize UART
 	UCA0CTL1 |= UCSSEL_2;                   			// SMCLK
 	UCA0BR0 = 104;                          			// 1MHz 9600
 	UCA0BR1 = 0;                            			// 1MHz 9600
 	UCA0MCTL = UCBRS0;                      			// Modulation UCBRSx = 1
-	UCA0CTL1 &= ~UCSWRST;               			    // Initialize USCI state machine
-	IE2 |= UCA0RXIE;									// Enable UCA0 Receive Interrupt
+	UCA0CTL1 &= ~UCSWRST;               			        // Initialize USCI state machine
+	IE2 |= UCA0RXIE;						// Enable UCA0 Receive Interrupt
 }
 
 
@@ -60,7 +60,7 @@ void setupTimer(void) {
 	TACCTL1 = CM_2 + CCIS_0 + SCS + CAP + CCIE;			// Capture Mode P1.2
 	TACCR2 = 1000;
 	TACCTL2 = CM_2 + CCIE;
-	TACTL = TASSEL_1 + MC_2 + TAIE;						// Source -> ACLK, Continuous Mode
+	TACTL = TASSEL_1 + MC_2 + TAIE;					// Source -> ACLK, Continuous Mode
 }
 
 
@@ -103,8 +103,8 @@ __interrupt void ISR_receiveIR(void)
     		} else {
     			if (TimeInterval >BIT_TIME_MAX || TimeInterval < BIT_TIME_MIN) { resetDetection(); break; }
     			// Decoding NEC Protocol
-    			P1OUT |= LED0; 								// Turn on LED0 to indicate the IR reception
-    			CodeRepeat=0;								// Receiving new signal
+    			P1OUT |= LED0; 					// Turn on LED0 to indicate the IR reception
+    			CodeRepeat=0;					// Receiving new signal
     			// First 16bits of NEC -> Address
     			if (TimeInterval > BIT_TIME_HIGH) {
     				if (BitCount < 16) {
@@ -134,7 +134,7 @@ __interrupt void ISR_receiveIR(void)
     }
     //TACCR2 Interrupt
     case  4:  if (EdgeCount==1) EdgeCount=0; break; 			// Edge Fault Correction
-    case 10: break; 											// Timer Overflow Interrupt - Not used
+    case 10: break; 							// Timer Overflow Interrupt - Not used
   }
 }
 
@@ -146,7 +146,7 @@ void resetDetection(void) {
 	BitCount =0;
     EdgeCount =0;
     CodeRepeat =0;
-    P1OUT &= ~LED0;												// Turn off LED0
+    P1OUT &= ~LED0;							// Turn off LED0
 
 }
 
@@ -274,14 +274,14 @@ __interrupt void receiveSerial_ISR(void)
   unsigned char SerialResponse ='\0';
   switch (SerialCommand)
   {
-	case 0xFF: SerialResponse = 0xAA; break;					// Reset
-	case 0xF6: SerialResponse = 0xAA; break;					// Set Default & Reset
-	case 0xEE: SerialResponse = 0xEE; break;					// Echo
-	case 0xF2: SerialResponse = 0xAB; break;					// Keyboard ID
-	case 0xF0: SerialResponse = 0x03; break;					// Get ScanCode Set
+	case 0xFF: SerialResponse = 0xAA; break;				// Reset
+	case 0xF6: SerialResponse = 0xAA; break;				// Set Default & Reset
+	case 0xEE: SerialResponse = 0xEE; break;				// Echo
+	case 0xF2: SerialResponse = 0xAB; break;				// Keyboard ID
+	case 0xF0: SerialResponse = 0x03; break;				// Get ScanCode Set
 	default: break;
   }
-  IE2 |= UCA0TXIE; 	                       						// Enable USCI_A0 TX interrupt
+  IE2 |= UCA0TXIE; 	                       					// Enable USCI_A0 TX interrupt
   UCA0TXBUF = 0xFA;
   while (!(UCA0TXIFG));
   if (SerialResponse!='\0') UCA0TXBUF = SerialResponse;
