@@ -5,17 +5,17 @@
 #include "keycodes.c"
 
 /* Prototypes */
-void sysInit(void);							// Initialize System Clocks and GPIO
-void setupTimer(void); 						// Initialize Timer A
-void resetDetection(void); 					// Reset Timer A and Pulse Train Specific Variables
-void decodeCommand(void); 					// Decode the IRCommand just received
-void encodePackets(void);					// Encode the packets into PS/2 Format
-void sendPackets(void); 					// Send the packets via UART
+void sysInit(void);					// Initialize System Clocks and GPIO
+void setupTimer(void); 					// Initialize Timer A
+void resetDetection(void); 				// Reset Timer A and Pulse Train Specific Variables
+void decodeCommand(void); 				// Decode the IRCommand just received
+void encodePackets(void);				// Encode the packets into PS/2 Format
+void sendPackets(void); 				// Send the packets via UART
 unsigned char alphaDecode(void);			// Decode alphabet from numbers and return the character
 
 /* Interrupts */
-__interrupt void receiveIR_ISR(void); 		// Receive the IR Pulse train
-__interrupt void receiveSerial_ISR(void);	// Receive Serial Input
+__interrupt void receiveIR_ISR(void); 		        // Receive the IR Pulse train
+__interrupt void receiveSerial_ISR(void);	        // Receive Serial Input
 
 /* Pulse Width Constants */
 #define BIT_TIME_START 156
